@@ -1,0 +1,187 @@
+@startuml
+class ru.kubsu.app.MainActivity {
+~ Button easyButton
+~ Button mediumButton
+~ Button hardButton
+~ Button quitButton
+~ Button gamersButton
+# void onCreate(Bundle)
++ void onClick(View)
+}
+class ru.kubsu.app.SudokuActivity {
+- Chronometer chronometer
+# void onCreate(Bundle)
++ void checkGame(View)
+}
+class ru.kubsu.database.Gamer {
+- long id
+- String name
+- long score
++ <<Create>> Gamer(long,String,long)
++ long getId()
++ void setId(long)
++ String getName()
++ void setName(String)
++ long getScore()
++ void setScore(int)
++ String toString()
+}
+class ru.kubsu.app.GameEngine {
+- {static} GameEngine instance
+- Context context
+- GameGrid grid
+- int selectedPosX
+- <<Create>> GameEngine()
++ {static} GameEngine getInstance()
++ void createGrid(Context,int)
++ GameGrid getGrid()
++ void setSelectedPosition(int,int)
++ void setNumber(int)
++ boolean checkGrid()
+}
+class ru.kubsu.app.SudokuGenerator {
+- {static} SudokuGenerator instance
+- ArrayList<ArrayList<Integer>> Available
+- Random rand
+- <<Create>> SudokuGenerator()
++ {static} SudokuGenerator getInstance()
++ int[][] generateGrid()
++ int[][] removeElements(int[][],int)
+- void clearGrid(int[][])
+- boolean checkConflict(int[][],int,int)
+- boolean checkHorizontalConflict(int[][],int,int,int)
+- boolean checkVerticalConflict(int[][],int,int,int)
+- boolean checkRegionConflict(int[][],int,int,int)
+}
+class ru.kubsu.database.DatabaseHelper {
+- {static} String DATABASE_NAME
+- {static} int SCHEMA
+~ {static} String TABLE
++ {static} String COLUMN_ID
++ {static} String COLUMN_NAME
++ {static} String COLUMN_SCORE
++ <<Create>> DatabaseHelper(Context)
++ void onCreate(SQLiteDatabase)
++ void onUpgrade(SQLiteDatabase,int,int)
+}
+class ru.kubsu.view.sudokugrid.GameGrid {
+- SudokuCell[][] Sudoku
+- Context context
++ <<Create>> GameGrid(Context)
++ void setGrid(int[][])
++ SudokuCell[][] getGrid()
++ SudokuCell getItem(int,int)
++ SudokuCell getItem(int)
++ void setItem(int,int,int)
++ boolean checkGame()
+}
+class ru.kubsu.app.SudokuChecker {
+- {static} SudokuChecker instance
+- <<Create>> SudokuChecker()
++ {static} SudokuChecker getInstance()
++ boolean checkSudoku(int[][])
+- boolean checkHorizontal(int[][])
+- boolean checkVertical(int[][])
+- boolean checkRegions(int[][])
+- boolean checkRegion(int[][],int,int)
+}
+class ru.kubsu.app.WinnerActivity {
+- ListView userList
+- ArrayList<Gamer> gamers
+~ ArrayAdapter<Gamer> arrayAdapter
+# void onCreate(Bundle)
++ void onResume()
++ void setData()
+}
+class ru.kubsu.database.DatabaseAdapter {
+- DatabaseHelper dbHelper
+- SQLiteDatabase database
++ <<Create>> DatabaseAdapter(Context)
++ DatabaseAdapter open()
++ void close()
+- Cursor getAllEntries()
++ ArrayList<Gamer> getGamers()
++ long getCount()
++ Gamer getGamer(long)
++ long insert(Gamer)
++ long delete(long)
++ long update(Gamer)
+}
+class ru.kubsu.view.buttonsgrid.ButtonsGridView {
++ <<Create>> ButtonsGridView(Context,AttributeSet)
+}
+class ru.kubsu.view.buttonsgrid.ButtonsGridView.ButtonsGridViewAdapter {
+- Context context
++ <<Create>> ButtonsGridViewAdapter(Context)
++ int getCount()
++ Object getItem(int)
++ long getItemId(int)
++ View getView(int,View,ViewGroup)
+}
+class ru.kubsu.view.sudokugrid.BaseSudokuCell {
+- int value
+- boolean modifiable
++ <<Create>> BaseSudokuCell(Context)
+# void onMeasure(int,int)
++ void setNotModifiable()
++ void setInitValue(int)
++ void setValue(int)
++ int getValue()
+}
+class ru.kubsu.view.sudokugrid.SudokuCell {
+- Paint mPaint
++ <<Create>> SudokuCell(Context)
+# void onDraw(Canvas)
+- void drawNumber(Canvas)
+- void drawLines(Canvas)
+}
+class ru.kubsu.view.buttonsgrid.NumberButton {
+- int number
++ <<Create>> NumberButton(Context,AttributeSet)
++ void onClick(View)
++ void setNumber(int)
+}
+class ru.kubsu.app.GamerActivity {
+- EditText nameBox
+- EditText scoreBox
+- Button delButton
+- DatabaseAdapter adapter
+- long userId
+- long userScore
+# void onCreate(Bundle)
++ void save(View)
++ void delete(View)
+- void goHome()
+}
+class ru.kubsu.view.sudokugrid.SudokuGridView {
+- Context context
++ <<Create>> SudokuGridView(Context,AttributeSet)
+# void onMeasure(int,int)
+}
+class ru.kubsu.view.sudokugrid.SudokuGridView.SudokuGridViewAdapter {
+- Context context
++ <<Create>> SudokuGridViewAdapter(Context)
++ int getCount()
++ Object getItem(int)
++ long getItemId(int)
++ View getView(int,View,ViewGroup)
+}
+
+
+android.view.View.OnClickListener <|.. ru.kubsu.app.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- ru.kubsu.app.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- ru.kubsu.app.SudokuActivity
+android.database.sqlite.SQLiteOpenHelper <|-- ru.kubsu.database.DatabaseHelper
+androidx.appcompat.app.AppCompatActivity <|-- ru.kubsu.app.WinnerActivity
+android.widget.GridView <|-- ru.kubsu.view.buttonsgrid.ButtonsGridView
+ru.kubsu.view.buttonsgrid.ButtonsGridView +.. ru.kubsu.view.buttonsgrid.ButtonsGridView.ButtonsGridViewAdapter
+android.widget.BaseAdapter <|-- ru.kubsu.view.buttonsgrid.ButtonsGridView.ButtonsGridViewAdapter
+android.view.View <|-- ru.kubsu.view.sudokugrid.BaseSudokuCell
+ru.kubsu.view.sudokugrid.BaseSudokuCell <|-- ru.kubsu.view.sudokugrid.SudokuCell
+android.view.View.OnClickListener <|.. ru.kubsu.view.buttonsgrid.NumberButton
+androidx.appcompat.widget.AppCompatButton <|-- ru.kubsu.view.buttonsgrid.NumberButton
+androidx.appcompat.app.AppCompatActivity <|-- ru.kubsu.app.GamerActivity
+android.widget.GridView <|-- ru.kubsu.view.sudokugrid.SudokuGridView
+ru.kubsu.view.sudokugrid.SudokuGridView +.. ru.kubsu.view.sudokugrid.SudokuGridView.SudokuGridViewAdapter
+android.widget.BaseAdapter <|-- ru.kubsu.view.sudokugrid.SudokuGridView.SudokuGridViewAdapter
+@enduml
